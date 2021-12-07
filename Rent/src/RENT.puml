@@ -1,0 +1,127 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam dpi 150
+
+abstract class Account{
+- userId:String
+- username:String
+- password:String
+- telNo:String
+- idCardNo:String
+
++ Account(String userId, String username,
+String password, String telNo, String idCardNo)
++ getUserId():String
++ setUserId(String userId):void
++ getUsername():String
++ setUsername(String username):void
++ getPassword():String
++ setPassword(String password):void
++ getTelNo():String
++ setTelNo(String telNo):void
++ getIdCardNo():String
++ setIdCardNo(String idCardNo):void
+}
+
+class User extends Account{
+- state:AbstractState
+- deposit:double
++ User(String userId, String username,
+    String password, String telNo,
+    tring idCardNo)
++ getDeposit():double
++ setDeposit(double deposit):void
++ rentCar():void
++ completeRentCar(Order order):void
++ getState():AbstractState
++ setState(AbstractState state):void
+}
+
+
+User --> AbstractState : state
+AbstractState --> User : user
+
+abstract class AbstractState{
+# user:User
+# pint:Int
+# stateName:String
++ onTime():boolean
++ completeRentCar():void
++ getPoint():Int
++ setPoint(int pint):void
++ getStateName():String
++ setStateName(String stateName):void
+}
+
+class PrimaryState extends AbstractState{
++ PrimaryState(AbstractState state)
++ checkState(int score):void
+}
+
+class MiddleState extends AbstractState{
++ MiddleState(AbstractState state)
++ checkState(int score):void
+}
+
+class HightState extends AbstractState{
++ HightState(AbstractState state)
++ checkState(int score):void
+}
+
+class EncryptDES {
+- key:Key
+- KEY_STR="myKey":String
+- CHARSETNAME="UTF-8":String
+- ALGORITHM="DES":String
++ encryptData(String str):String
++ decryptData(String str):String
+}
+
+abstract class DataOperation {
+- data:String
++ getData():String
++ setData(String data):void
++ doEncrypt(String data):String
++ deEncrypt(String data):String
+}
+
+class DataEncryptAdapter extends DataOperation{
+- encryptDES:EncryptDES
++ DataEncryptAdapter()
++ doEncrypt(String data):String
++ deEncrypt(String data):String
+}
+
+DataEncryptAdapter *--> EncryptDES :data
+
+class Manager extends Account{
++ Manager(String userId, String username,
+    String password, String telNo, String idCardNo);
++ addCar(Car car): void
++ totalSales():void
+}
+
+class RentServer {
+- {field} Account account = new User("0","vistor","","","");
+- {field} level:int // 0 游客， 1 用户， 2管理员
+- {field} dataDao: DataOperation = new DataEncryptAdapter();
++ login(Account account, int level):void
++ register(Account account):void
++ rentCar():void
++ completeRentCar(Order order):void
++ addCar(Car car):void
++ totalSales():void
+}
+
+User --> RentServer
+Manager --> RentServer
+
+interface CarState {
+
+}
+
+interface OrderState {
+
+}
+
+@enduml

@@ -1,0 +1,160 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam dpi 150
+class User{
+- userId:String
+- name:String
+- password:String
+- nick:String
++ getUserId():String
++ setUserId(Sting userId):void
++ getName():String
++ setName(String name):void
++ getPassword():String
++ setPassword(String password):void
++ getNick():String
++ setNick(String nick):void
+}
+
+class Collection{
+- collectId:String
+- noteList:ArrayList
+- userId:String
++ getCollectId():String
++ setCollectId(String collectId):void
++ getNoteList():ArrayList
++ setNoteList(ArrayList noteList):void
++ getUserId():String
++ setUserId(String userId):void
++ add(Note note):void
++ remove(Note note):void
+}
+
+
+interface UserHandle {
+login(User user):void
+register(User user):void
+}
+
+class NoteServer {
+- {field}noteServer:NoteServer = new NoteServer()
+- {field}user:User = new User("0", "vistor", "", "游客")
+- {field}realizeEncrypt:AdvancedEncryptMD5
+- {field}userNote:UserNote = new UserNote();
+- NoteServer()
++ getInstence():NoteServer
++ login():void
++ register():void
++ saveNote():void
++ getNote():void
+}
+UserHandle <|-- NoteServer
+NoteServer o-left-> NoteServer : instance
+NoteServer .down.> NoteServer: creates
+
+interface NoteHandle {
+createNote(Note note):void
+editNote(Note note):void
+restoreNote(Note note):void
+readNote():void
+saveNote():Note
+shareNote(Note note):void
+unshareNote(Note note):void
+deleteNote(Note note):void
+recovery(Note note):void
+}
+
+class UserNote {
+- noteId:String
+- userId:String
+- state:String
+- title:String
+- body:String
+- createTime:Date
+- lastModifyTime:Date
+- tag:ArrayList
++ get/set()
++ createNote(Note note):void
++ editNote(Note note):void
++ restoreNote(Note note):void
++ readNote():void
++ saveNote():Note
++ shareNote(Note note):void
++ unshareNote(Note note):void
++ deleteNote(Note note):void
++ recovery(Note note):void
+}
+NoteHandle <|-- UserNote
+UserNote ..>Note
+NoteServer o--> Note :note
+class Note{
+- noteId:String
+- userId:String
+- state:String
+- title:String
+- body:String
+- createTime:Date
+- lastModifyTime:Date
+- tag:ArrayList
++ Note(String noteId, String userId,
+    String state, String title,
+    String body, Date createTime,
+    Date lastModifyTime, ArrayList tag):void
++ get/set()
+}
+
+
+abstract class DataOperation{
+- data:String
++ getData():String
++ setData():void
++ doDataFilter(String data):String
+}
+
+class DataFilter{
++ doDataFilter(String data):String
+}
+
+class DataFilterAdapter{
+- dataFilter:DataFilter
++ DataFilterAdapter()
++ doDataFilter(String data):String
+
+}
+
+DataOperation <|- DataFilterAdapter
+DataFilterAdapter *-> DataFilter :datafilter
+
+interface NoteState {
+String NOTE_TYPE_PRIVATE = "1"; // 私人笔记
+String NOTE_TYPE_SHARED = "2"; // 分享公开的笔记
+String NOTE_TYPE_DELETE = "3"; // 被删除的笔记
+String NOTE_TYPE_LAST_VERSION = "4"; // 上一个版本的笔记,只保存在数据中就行了
+}
+
+interface EncryptMD5 {
++ encrypt(String Origin):String
+}
+
+class SimpleEncryptMD5 {
++ encrypt(String Origin):String
+}
+
+class EncryptDecorator{
+- entryptMD5: EntryptMD5
++ EncryptDecorator(EntryptMD5 entryptMD5): void
++ encrypt(String Origin):String
+}
+
+class AdvancedEncryptMD5 {
++ AdvancedEncryptMD5(EncryptMD5 entryptMD5)
++ encrypt(String Origin):String
++ decrypt(String Origin):String
+}
+
+EncryptMD5 <|.. SimpleEncryptMD5
+EncryptMD5 <|.. EncryptDecorator
+
+EncryptDecorator o--> EncryptMD5 : encryptMD5
+EncryptDecorator <|-- AdvancedEncryptMD5
+@enduml
